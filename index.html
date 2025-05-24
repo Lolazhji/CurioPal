@@ -3,17 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CurioPal - Explore with Zubi</title>
+  <title>CurioPal - Ask Zubi!</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-yellow-50 text-gray-800">
   <div class="flex flex-col items-center justify-center min-h-screen p-4">
-    <img src="zubi.png" alt="Zubi the Robot" class="w-40 h-40 mb-6">
-    <h1 class="text-4xl font-bold mb-4">Meet Zubi, Your Child’s AI Curiosity Pal!</h1>
-    <p class="text-lg text-center max-w-xl mb-6">
-      Zubi answers all the “Why?” questions kids love to ask — from science to nature and everything in between!
-    </p>
-    <a href="#" class="px-6 py-3 bg-blue-500 text-white rounded hover:bg-blue-600 transition">Try Now</a>
+    <img src="zubi.png" alt="Zubi the Robot" class="w-32 h-32 mb-4">
+    <h1 class="text-3xl font-bold mb-2">Ask Zubi Anything!</h1>
+    <p class="mb-4 text-center text-lg max-w-md">Type a “Why” question below and Zubi will answer!</p>
+
+    <div class="w-full max-w-xl">
+      <input id="questionInput" type="text" placeholder="Why is the sky blue?" class="w-full p-3 rounded border border-gray-300 mb-4">
+      <button onclick="askZubi()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Ask Zubi</button>
+      <div id="answer" class="mt-6 text-lg text-gray-700"></div>
+    </div>
   </div>
+
+  <script>
+    async function askZubi() {
+      const question = document.getElementById("questionInput").value;
+      const answerDiv = document.getElementById("answer");
+      answerDiv.innerText = "Zubi is thinking...";
+
+      try {
+        const response = await fetch("/api/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question })
+        });
+        const data = await response.json();
+        answerDiv.innerText = data.answer;
+      } catch (error) {
+        answerDiv.innerText = "Oops! Something went wrong. Try again.";
+      }
+    }
+  </script>
 </body>
 </html>
