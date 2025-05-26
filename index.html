@@ -10,7 +10,7 @@
   <div class="flex flex-col items-center justify-center min-h-screen p-4">
     <img src="zubi.png" alt="Zubi the Robot" class="w-32 h-32 mb-4">
     <h1 class="text-3xl font-bold mb-2">Ask Zubi Anything!</h1>
-    <p class="mb-4 text-center text-lg max-w-md">Type a “Why” question below and Zubi will answer!</p>
+    <p class="mb-4 text-center text-lg max-w-md">Type a "Why" question below and Zubi will answer!</p>
 
     <div class="w-full max-w-xl">
       <input id="questionInput" type="text" placeholder="Why do stars twinkle?" class="w-full p-3 rounded border border-gray-300 mb-4">
@@ -26,15 +26,24 @@
       answerDiv.innerText = "Zubi is thinking...";
 
       try {
-        const response = await fetch("/api/ask", {
+        const response = await fetch("/.netlify/functions/ask", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ question })
         });
+        
+        if (!response.ok) {
+          throw new Error('API request failed');
+        }
+        
         const data = await response.json();
+        if (data.error) {
+          throw new Error(data.error);
+        }
         answerDiv.innerText = data.answer;
       } catch (error) {
-        answerDiv.innerText = "Oops! Something went wrong. Try again.";
+        answerDiv.innerText = "Oops! Something went wrong. Please try again.";
+        console.error('Error:', error);
       }
     }
   </script>

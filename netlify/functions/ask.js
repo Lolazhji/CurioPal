@@ -22,7 +22,10 @@ export async function handler(event) {
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     
     if (!OPENAI_API_KEY) {
-      throw new Error('OpenAI API key is not configured');
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'OpenAI API key is not configured' })
+      };
     }
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -52,15 +55,22 @@ export async function handler(event) {
     
     return {
       statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
       body: JSON.stringify({ answer })
     };
   } catch (error) {
     console.error('Error:', error);
     return {
       statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
       body: JSON.stringify({ 
-        error: 'Something went wrong',
-        message: process.env.NODE_ENV === 'development' ? error.message : undefined
+        error: 'Something went wrong. Please try again.'
       })
     };
   }
