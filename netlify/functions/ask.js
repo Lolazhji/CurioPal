@@ -2,9 +2,26 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export async function handler(event) {
+  // Handle CORS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+      },
+      body: ''
+    };
+  }
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({ error: 'Method not allowed' })
     };
   }
@@ -15,6 +32,10 @@ export async function handler(event) {
     if (!question) {
       return {
         statusCode: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ error: 'Question is required' })
       };
     }
@@ -24,6 +45,10 @@ export async function handler(event) {
     if (!OPENAI_API_KEY) {
       return {
         statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ error: 'OpenAI API key is not configured' })
       };
     }
@@ -45,19 +70,19 @@ export async function handler(event) {
       })
     });
 
+    const data = await response.json();
+    
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error?.message || 'OpenAI API error');
+      throw new Error(data.error?.message || 'OpenAI API error');
     }
 
-    const data = await response.json();
     const answer = data.choices?.[0]?.message?.content || "Hmm... I'm not sure about that yet!";
     
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ answer })
     };
@@ -66,8 +91,8 @@ export async function handler(event) {
     return {
       statusCode: 500,
       headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ 
         error: 'Something went wrong. Please try again.'
