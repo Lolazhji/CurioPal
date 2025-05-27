@@ -3,49 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CurioPal - Ask Zubi!</title>
+  <title>CurioPal – Learn with Zubi</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-yellow-50 text-gray-800">
-  <div class="flex flex-col items-center justify-center min-h-screen p-4">
-    <img src="zubi.png" alt="Zubi the Robot" class="w-32 h-32 mb-4">
-    <h1 class="text-3xl font-bold mb-2">Ask Zubi Anything!</h1>
-    <p class="mb-4 text-center text-lg max-w-md">Type a "Why" question below and Zubi will answer!</p>
-
-    <div class="w-full max-w-xl">
-      <input id="questionInput" type="text" placeholder="Why do stars twinkle?" class="w-full p-3 rounded border border-gray-300 mb-4">
-      <button onclick="askZubi()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Ask Zubi</button>
-      <div id="answer" class="mt-6 text-lg text-gray-700 whitespace-pre-wrap"></div>
-    </div>
-  </div>
-
   <script>
-    async function askZubi() {
-      const question = document.getElementById("questionInput").value;
-      const answerDiv = document.getElementById("answer");
-      answerDiv.innerText = "Zubi is thinking...";
-
-      try {
-        const response = await fetch("/.netlify/functions/ask", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question })
-        });
-        
-        if (!response.ok) {
-          throw new Error('API request failed');
-        }
-        
-        const data = await response.json();
-        if (data.error) {
-          throw new Error(data.error);
-        }
-        answerDiv.innerText = data.answer;
-      } catch (error) {
-        answerDiv.innerText = "Oops! Something went wrong. Please try again.";
-        console.error('Error:', error);
-      }
+    let lang = 'en';
+    function toggleLang() {
+      lang = lang === 'en' ? 'zh' : 'en';
+      document.getElementById('title').textContent = lang === 'en' ? 'Welcome to CurioPal' : '欢迎来到 CurioPal';
+      document.getElementById('desc').textContent = lang === 'en'
+        ? "Zubi is your AI science buddy. Let's start learning!"
+        : "Zubi 是你的 AI 科学小伙伴，一起开始探索吧！";
+      document.getElementById('startBtn').textContent = lang === 'en' ? 'Start Learning' : '开始学习';
     }
   </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+  <div class="min-h-screen flex flex-col items-center justify-center p-6">
+    <img src="zora.png" alt="Zubi the Science Teacher" class="w-32 h-32 mb-4">
+    <h1 id="title" class="text-4xl font-bold text-center mb-4">Welcome to CurioPal</h1>
+    <p id="desc" class="text-lg text-center max-w-xl mb-6">Zubi is your AI science buddy. Let's start learning!</p>
+    <button onclick="toggleLang()" class="mb-4 px-4 py-2 border rounded">中 / EN</button>
+    <a href="lesson.html" id="startBtn" class="px-6 py-3 bg-blue-500 text-white rounded hover:bg-blue-600 transition">Start Learning</a>
+    <footer class="mt-12 text-sm text-gray-400">© 2025 CurioPal. All rights reserved.</footer>
+  </div>
 </body>
 </html>

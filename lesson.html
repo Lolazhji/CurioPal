@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lesson – Light & Shadow</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-900 font-sans">
+  <div class="max-w-2xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-2">🌞 Light & Shadow</h1>
+    <p class="mb-4">Zubi asks: Why do you think shadows are longer in the morning?</p>
+    <input id="userInput" class="w-full p-2 border mb-4" placeholder="Type your answer..." />
+    <button onclick="askZubi()" class="px-4 py-2 bg-blue-500 text-white rounded">Submit</button>
+    <p id="response" class="mt-4 text-green-600 font-semibold"></p>
+    <footer class="mt-12 text-sm text-gray-400">© 2025 CurioPal. All rights reserved.</footer>
+  </div>
+  <script>
+    async function askZubi() {
+      const input = document.getElementById('userInput').value;
+      const resBox = document.getElementById('response');
+      resBox.textContent = "Zubi is thinking...";
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: input })
+      });
+      const data = await res.json();
+      resBox.textContent = data.answer;
+    }
+  </script>
+</body>
+</html>
